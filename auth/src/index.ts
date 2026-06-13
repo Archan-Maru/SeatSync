@@ -1,33 +1,5 @@
-import express from 'express';
-import "express-async-errors";
-import { currentUserRouter, signinRouter, signoutRouter, signupRouter } from './routes'
-import { errorHandler } from './middlewares/index'
-import { NotFoundError } from './errors/index'
 import mongoose from 'mongoose';
-import cookieSession from 'cookie-session';
-
-const app = express();
-app.set('trust proxy', true);
-
-app.use(express.json());
-
-app.use(
-    cookieSession({
-        signed: false,
-        secure: true
-    })
-)
-
-app.use(currentUserRouter);
-app.use(signinRouter);
-app.use(signoutRouter);
-app.use(signupRouter);
-
-app.all('*', async (req, res) => {
-    throw new NotFoundError();
-});
-
-app.use(errorHandler);
+import {app} from './app';
 
 const start = async () => {
 
@@ -37,7 +9,7 @@ const start = async () => {
 
     try {
         await mongoose.connect('mongodb://auth-mongo-srv:27017/auth');
-        console.log('Connected');
+        console.log('Database Connected');
     } catch (error) {
         console.log(error);
     }

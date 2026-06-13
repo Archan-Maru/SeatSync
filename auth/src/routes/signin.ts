@@ -1,10 +1,9 @@
 import express,{Request,Response} from "express";
 import {body} from 'express-validator';
-import {validateRequest} from '../middlewares';
+import {validateRequest,BadRequestError} from '@sgtickets/common';
 import {User} from '../models';
 import {Password} from '../services/password';
 import jwt from 'jsonwebtoken';
-import { BadRequestError } from "../errors";
 import 'cookie-session';
 
 const router = express.Router();
