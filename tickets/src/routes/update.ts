@@ -7,6 +7,8 @@ requireAuth,
 NotAuthorizedError
 } from '@sgtickets/common';
 import { Ticket } from '../models';
+import { natsWrapper } from '../nats_wrapper';
+import { TicketUpdatedPublisher } from '../events/publisher';
 
 const router=express.Router();
 
@@ -31,6 +33,14 @@ router.put('/api/tickets/:id',requireAuth,[
     });
 
     await ticket.save();
+
+    new TicketUpdatedPublisher(natsWrapper.client).publish({
+        id: ticket.id!,
+        title: ticket.title,
+        price: ticket.price,
+        userId: ticket.userId,
+        version: ticket.version
+    });
 
     res.send(ticket);
 });
