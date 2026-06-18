@@ -47,7 +47,15 @@ const orderSchema = new mongoose.Schema({
             delete ret._id;
         }
     },
-    versionKey: 'version'
+});
+
+orderSchema.set('versionKey','version');
+orderSchema.pre('save', function () {
+    this.$where = {
+        ...this.$where,
+        version: this.get('version')
+    };
+    this.increment();
 });
 
 orderSchema.statics.build = (attrs: OrderAttrs) => {

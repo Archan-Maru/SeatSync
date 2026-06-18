@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { app } from './app';
 import { natsWrapper } from './nats_wrapper';
-
+import {OrderCancelledListener,OrderCreatedListener} from './events/listeners'
 const start = async () => {
 
     if (!process.env.JWT_KEY) {
@@ -36,6 +36,9 @@ const start = async () => {
 
         await mongoose.connect(process.env.MONGO_URI);
         console.log('Database Connected');
+
+        new OrderCreatedListener(natsWrapper.client).listen();
+        new OrderCancelledListener(natsWrapper.client).listen();
     } catch (error) {
         console.log(error);
     }

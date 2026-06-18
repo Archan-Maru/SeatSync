@@ -12,6 +12,7 @@ interface TicketDoc extends mongoose.Document{
     userId:string;
     version:number;
     id:string;
+    orderId?:string;
 }
 
 interface TicketModel extends mongoose.Model<TicketDoc>{
@@ -30,6 +31,9 @@ const ticketSchema=new mongoose.Schema({
     userId:{
         type:String,
         required:true
+    },
+    orderId:{
+        type:String
     }
 },
 {
@@ -39,7 +43,16 @@ const ticketSchema=new mongoose.Schema({
             delete ret._id;
         }
     },
-    versionKey: 'version'
+});
+
+ticketSchema.set('versionKey','version');
+
+ticketSchema.pre('save', function () {
+    this.$where = {
+        ...this.$where,
+        version: this.get('version')
+    };
+    this.increment();
 });
 
 ticketSchema.statics.build=(attrs:TicketAttrs) => {

@@ -12,6 +12,7 @@ export interface TicketDoc extends mongoose.Document{
     title:string;
     price:number;
     isReserved():Promise<Boolean>;
+    version:number;
     id:string;
 }
 
@@ -36,6 +37,15 @@ const ticketSchema=new mongoose.Schema({
             delete ret._id;
         }
     }
+});
+
+ticketSchema.set('versionKey','version');
+ticketSchema.pre('save', function () {
+    this.$where = {
+        ...this.$where,
+        version: this.get('version')
+    };
+    this.increment();
 });
 
 ticketSchema.statics.build=(attrs:TicketAttrs)=>{

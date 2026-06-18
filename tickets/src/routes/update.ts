@@ -4,7 +4,8 @@ import {
 validateRequest,
 NotFoundError,
 requireAuth,
-NotAuthorizedError
+NotAuthorizedError,
+BadRequestError
 } from '@sgtickets/common';
 import { Ticket } from '../models';
 import { natsWrapper } from '../nats_wrapper';
@@ -21,6 +22,10 @@ router.put('/api/tickets/:id',requireAuth,[
 
     if(!ticket){
         throw new NotFoundError();
+    }
+
+    if(ticket.orderId){
+        throw new BadRequestError('Cannot edit a reserved ticket');
     }
 
     if(ticket.userId !== req.currentUser!.id){
