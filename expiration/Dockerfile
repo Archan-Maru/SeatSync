@@ -1,0 +1,11 @@
+FROM node:alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install --omit=dev --no-audit --no-fund
+
+COPY . .
+
+CMD ["npm", "start"]
