@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 import { app } from './app';
 import { natsWrapper } from './nats_wrapper';
-import {TicketCreatedListener,TicketUpdatedListener,ExpirationCompleteListener,PaymentCreatedListener} from './events/listners';
+import {OrderCreatedListener,OrderCancelledListener} from './events/listeners';
+
 
 const start = async () => {
 
@@ -34,14 +35,12 @@ const start = async () => {
         });
         process.on('SIGINT', () => natsWrapper.client.close());
         process.on('SIGTERM', () => natsWrapper.client.close());
-            
+
         await mongoose.connect(process.env.MONGO_URI);
         console.log('Database Connected');
 
-        new TicketCreatedListener(natsWrapper.client).listen();
-        new TicketUpdatedListener(natsWrapper.client).listen();
-        new ExpirationCompleteListener(natsWrapper.client).listen();
-        new PaymentCreatedListener(natsWrapper.client).listen();
+        new OrderCancelledListener(natsWrapper.client).listen();
+        new OrderCreatedListener(natsWrapper.client).listen();
     } catch (error) {
         console.log(error);
     }

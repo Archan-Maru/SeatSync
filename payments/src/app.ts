@@ -1,8 +1,8 @@
 import express from 'express';
 import "express-async-errors";
-import { errorHandler, NotFoundError,currentUser } from '@sgtickets/common';
+import { errorHandler, NotFoundError, currentUser } from '@sgtickets/common';
 import cookieSession from 'cookie-session';
-import {createTicketRouter,showTicketRouter,indexTicketRouter,updateTicketRouter} from './routes';
+import { createPaymentRouter } from './routes';
 
 const app = express();
 app.set('trust proxy', true);
@@ -17,11 +17,7 @@ app.use(
 )
 
 app.use(currentUser);
-
-app.use(createTicketRouter);
-app.use(showTicketRouter);
-app.use(indexTicketRouter);
-app.use(updateTicketRouter);
+app.use(createPaymentRouter);
 
 app.all('*', async (req, res) => {
     throw new NotFoundError();
@@ -29,4 +25,4 @@ app.all('*', async (req, res) => {
 
 app.use(errorHandler);
 
-export {app};
+export { app };
